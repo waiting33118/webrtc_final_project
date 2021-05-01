@@ -1,4 +1,4 @@
-const WS_DOMAIN = process.env === 'production' ? '' : 'ws://127.0.0.1:3030'
+const WS_DOMAIN = process.env === 'production' ? 'ws://35.206.255.170:3030' : 'ws://127.0.0.1:3030'
 
 let ws
 
