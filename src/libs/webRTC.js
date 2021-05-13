@@ -12,7 +12,13 @@ export default class WebRTC {
   }
 
   getPermission () {
-    return navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    return navigator.mediaDevices.getUserMedia({
+      video: {
+        width: 1280,
+        height: 720
+      },
+      audio: true
+    })
   }
 
   createPeerConnection () {
