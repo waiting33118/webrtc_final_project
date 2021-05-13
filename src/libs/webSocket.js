@@ -1,4 +1,4 @@
-const WS_DOMAIN = process.env === 'production' ? 'ws://35.206.255.170:3030' : 'ws://127.0.0.1:3030'
+const WS_DOMAIN = process.env.NODE_ENV === 'development' ? 'ws://localhost:3030' : 'wss://webrtcfinalprojectbackend-6zwa3npg7q-de.a.run.app'
 
 let ws
 
