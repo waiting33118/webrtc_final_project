@@ -1,7 +1,7 @@
 <template>
   <div
     ref="roomEl"
-    class="room h-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 auto-rows-auto gap-1"
+    class="room h-full grid grid-cols-1 sm:grid-cols-2 auto-rows-auto gap-1"
   />
 </template>
 
@@ -48,7 +48,52 @@ export default {
 
       if (data.event === 'answer' && data.id === id) {
         await webRTC.setRemoteDescription(data.payload)
-        console.log(webRTC.peerConnection)
+        const roomEl = document.querySelector('.room')
+        const infoEl = document.createElement('table')
+        infoEl.innerHTML = `
+        <tr>
+          <th class="px-2">timestamp</th>
+          <th class="px-2">bytesSent</th>
+          <th class="px-2">frameHeight</th>
+          <th class="px-2">frameWidth</th>
+          <th class="px-2">framesPerSecond</th>
+          <th class="px-2">packetsSent</th>
+        </tr>
+        <tr>
+          <td class="timestamp">-</td>
+          <td class="bytesSent">-</td>
+          <td class="frameHeight">-</td>
+          <td class="frameWidth">-</td>
+          <td class="framesPerSecond">-</td>
+          <td class="packetsSent">-</td>
+        </tr>`
+
+        roomEl.append(infoEl)
+
+        const timestamp = document.querySelector('.timestamp')
+        const info1 = document.querySelector('.bytesSent')
+        const info2 = document.querySelector('.frameHeight')
+        const info3 = document.querySelector('.frameWidth')
+        const info4 = document.querySelector('.framesPerSecond')
+        const info5 = document.querySelector('.packetsSent')
+
+        let count = 1
+
+        setInterval(async () => {
+          const peerStat = await webRTC.peerConnection.getStats(null)
+          peerStat.forEach(stat => {
+            if (stat.type === 'outbound-rtp' && stat.kind === 'video') {
+              console.log(count)
+              timestamp.innerText = count
+              info1.innerText = stat.bytesSent
+              info2.innerText = stat.frameHeight
+              info3.innerText = stat.frameWidth
+              info4.innerText = stat.framesPerSecond
+              info5.innerText = stat.packetsSent
+              count++
+            }
+          })
+        }, 1000)
       }
 
       if (data.event === 'candidate') {
@@ -63,7 +108,7 @@ export default {
       console.log(id)
       webRTC.createPeerConnection()
       webRTC.onIceCandidate(ws)
-      webRTC.peerConnection.ontrack = ({ streams }) => {
+      webRTC.peerConnection.ontrack = async ({ streams }) => {
         const roomEl = document.querySelector('.room')
         const videoEl = document.createElement('video')
         videoEl.classList.add('h-full', 'w-full', 'object-cover')
